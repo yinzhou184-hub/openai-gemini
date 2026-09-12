@@ -499,24 +499,8 @@ const transformMessages = async (messages) => {
 };
 
 const transformTools = (req) => {
-  let tools, tool_config;
-  if (req.tools) {
-    const funcs = req.tools.filter(tool => tool.type === "function");
-    funcs.forEach(adjustSchema);
-    tools = [{ function_declarations: funcs.map(schema => schema.function) }];
-  }
-  if (req.tool_choice) {
-    const allowed_function_names = req.tool_choice?.type === "function" ? [ req.tool_choice?.function?.name ] : undefined;
-    if (allowed_function_names || typeof req.tool_choice === "string") {
-      tool_config = {
-        function_calling_config: {
-          mode: allowed_function_names ? "ANY" : req.tool_choice.toUpperCase(),
-          allowed_function_names
-        }
-      };
-    }
-  }
-  return { tools, tool_config };
+  // 直接清空客户端注入的 tools，避免 Google 原生后端对非法字段报错
+  return {};
 };
 
 const transformRequest = async (req, isV3) => ({
