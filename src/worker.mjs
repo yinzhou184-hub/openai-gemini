@@ -71,11 +71,14 @@ const API_VERSION = "v1beta";
 
 // https://github.com/googleapis/js-genai/blob/main/src/_api_client.ts#L21
 const API_CLIENT = "google-genai-sdk/1.34.0"; // npm view @google/genai version
-const makeHeaders = (apiKey, more) => ({
-  "x-goog-api-client": API_CLIENT,
-  ...(apiKey && { "x-goog-api-key": apiKey }),
-  ...more
-});
+const makeHeaders = (apiKey, more) => {
+  const key = apiKey || MY_GEMINI_KEY;
+  return {
+    "x-goog-api-client": API_CLIENT,
+    "x-goog-api-key": key,
+    ...more
+  };
+};
 
 async function handleModels (apiKey) {
   const response = await fetch(`${BASE_URL}/${API_VERSION}/models`, {
@@ -187,8 +190,9 @@ async function handleCompletions (req, apiKey) {
       body.tools.push({googleSearch: {}});
   }
   const TASK = req.stream ? "streamGenerateContent" : "generateContent";
-  let url = `${BASE_URL}/${API_VERSION}/models/${model}:${TASK}`;
-  if (req.stream) { url += "?alt=sse"; }
+  const key = apiKey || MY_GEMINI_KEY;
+let url = `${BASE_URL}/${API_VERSION}/models/${model}:${TASK}?key=${key}`;
+if (req.stream) { url += "&alt=sse"; }
   const response = await fetch(url, {
     method: "POST",
     headers: makeHeaders(apiKey, { "Content-Type": "application/json" }),
