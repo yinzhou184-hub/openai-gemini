@@ -11,7 +11,8 @@ export default {
     };
     try {
       const auth = request.headers.get("Authorization");
-      const apiKey = auth?.split(" ")[1];
+// 优先读客户端传来的 Key，如果客户端漏传了，自动使用你写死的 Key 兜底
+      const apiKey = auth?.split(" ")[1] || "AQ.Ab8RN6I7nyJ6-88cgs-SmlWg1rVHmxY6JhGm8V7NESmjG52e3g";
       const assert = (success) => {
         if (!success) {
           throw new HttpError("The specified HTTP method is not allowed for the requested resource", 400);
