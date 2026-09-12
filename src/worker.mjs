@@ -159,6 +159,11 @@ async function handleCompletions (req, apiKey) {
   }
   let isV3 = model.startsWith("gemini-3");
   let body = await transformRequest(req, isV3);
+
+  // 强行删除 tools，彻底阻止带 additionalProperties 的参数发往 Google
+  delete body.tools;
+  delete body.tool_config;
+  
   const extra = req.extra_body?.google;
   if (extra) {
     if (extra.safety_settings) {
