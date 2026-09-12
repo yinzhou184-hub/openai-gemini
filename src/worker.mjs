@@ -233,9 +233,8 @@ const adjustProps = (schemaPart) => {
   if (Array.isArray(schemaPart)) {
     schemaPart.forEach(adjustProps);
   } else {
-    if (schemaPart.type === "object" && schemaPart.properties && schemaPart.additionalProperties === false) {
-      delete schemaPart.additionalProperties;
-    }
+    // 无条件删除所有类型的 additionalProperties（不论是 boolean 还是 object）
+    delete schemaPart.additionalProperties;
     Object.values(schemaPart).forEach(adjustProps);
   }
 };
